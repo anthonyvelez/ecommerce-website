@@ -1,6 +1,7 @@
 const fs = require('fs');
 const crypto = require('crypto');
 
+//Not to be used for production purposes
 class UsersRepository {
 	constructor (filename) {
 		if (!filename) {
