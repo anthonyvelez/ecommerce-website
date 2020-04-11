@@ -1,5 +1,6 @@
 const express = require('express');
-const { check, validationResult } = require('express-validator');
+
+const { handleErrors } = require('./middlewares');
 const usersRepo = require('../../repositories/users');
 const signupTemplate = require('../../views/admin/auth/signup');
 const signinTemplate = require('../../views/admin/auth/signin');
@@ -23,15 +24,9 @@ router.post(
 		requirePassword,
 		requirePasswordConfirmation
 	],
+	handleErrors(signupTemplate),
 	async (req, res) => {
-		const errors = validationResult(req);
-
-		if (!errors.isEmpty()) {
-			return res.send(signupTemplate({ req, errors }));
-		}
-
-		const { email, password, passwordConfirmation } = req.body;
-
+		const { email, password } = req.body;
 		const user = await usersRepo.create({ email, password });
 
 		//Added by cookie-session
@@ -56,13 +51,8 @@ router.post(
 		requireEmailExists,
 		requireValidPasswordForUser
 	],
+	handleErrors(signinTemplate),
 	async (req, res) => {
-		const errors = validationResult(req);
-
-		if (!errors.isEmpty()) {
-			return res.send(signinTemplate({ errors }));
-		}
-
 		//Destuctured elements match "name" within input elements
 		const { email } = req.body;
 
